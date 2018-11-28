@@ -1,4 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+}
 
 .main {
   height: 100vh;
@@ -11,14 +13,15 @@
 .parent-container {
   display: flex;
   width: 100%;
-  flex-direction: column;
+
   border-top: solid 1px #dedede;
   border-left: solid 1px #dedede;
+  overflow-x: visible;
+  flex-wrap: wrap;
 
-  //overflow: auto;
   .row {
-    display: flex; // border:solid 1px red;
-    width: 100%;
+    display: flex;
+
     margin: 0;
     height: 1.5rem;
 
@@ -30,6 +33,10 @@
       border-right: solid 1px #dedede;
       min-width: 7rem;
       background-color: #F3F3F3;
+
+      &.highlight {
+        background-color: #dad5d5;
+      }
     }
 
     .input-field {
@@ -40,25 +47,28 @@
       border-collapse: collapse;
       border-right: solid 1px #dedede;
       min-width: 7rem;
+
+      input {
+        width: 100%;
+        padding: 0;
+        border: none;
+        min-width: 7rem;
+      }
     }
 
     .first-col {
       min-width: 3rem;
+      background-color: #F3F3F3;
+      justify-content: center;
+      align-items: center;
       position: -webkit-sticky;
       position: sticky;
       left: 0;
-      background-color: #F3F3F3;
-      justify-content: center;
+
+      &.highlight {
+        background-color: #dad5d5;
+      }
+
     }
   }
-}
-
-input {
-  padding: 0;
-  border: none;
-  min-width: 7rem;
-}
-
-.highlight {
-  background-color: rgb(128, 128, 128) !important;
 }
