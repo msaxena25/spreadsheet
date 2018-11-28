@@ -1,1 +1,64 @@
 /* You can add global styles to this file, and also import other style files */
+
+.main {
+  height: 100vh;
+  width: 100%;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.parent-container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  border-top: solid 1px #dedede;
+  border-left: solid 1px #dedede;
+
+  //overflow: auto;
+  .row {
+    display: flex; // border:solid 1px red;
+    width: 100%;
+    margin: 0;
+    height: 1.5rem;
+
+    .header {
+      width: 3.84%;
+      display: inline-flex;
+      justify-content: center;
+      border-bottom: solid 1px #dedede;
+      border-right: solid 1px #dedede;
+      min-width: 7rem;
+      background-color: #F3F3F3;
+    }
+
+    .input-field {
+      width: 3.84%;
+      display: inline-flex;
+      justify-content: flex-start;
+      border-bottom: solid 1px #dedede;
+      border-collapse: collapse;
+      border-right: solid 1px #dedede;
+      min-width: 7rem;
+    }
+
+    .first-col {
+      min-width: 3rem;
+      position: -webkit-sticky;
+      position: sticky;
+      left: 0;
+      background-color: #F3F3F3;
+      justify-content: center;
+    }
+  }
+}
+
+input {
+  padding: 0;
+  border: none;
+  min-width: 7rem;
+}
+
+.highlight {
+  background-color: rgb(128, 128, 128) !important;
+}
