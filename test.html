@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/konva@4.0.5/konva.min.js"></script>
+    
+    <meta charset="utf-8" />
+    <title>Konva Rect Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid gray;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <div>
+        <!-- <button onclick="zoomIn()">Zoom 100%</button>
+        <button onclick="zoomOut()">Zoom Normal</button> -->
+        <button onclick="fetchLocation(1)">Move forward</button>
+        <button onclick="fetchLocation(2)">Move back</button>
+    </div>
+    <!-- <script src="./gps.js"> -->
+
+    <script>
+
+
+var width = window.innerWidth;
+var height = window.innerHeight - 100;
+
+var stage = new Konva.Stage({
+    container: 'container',
+    width: width,
+    height: height
+});
+
+console.log('screen width ', width); // 1280 px assume it like miles
+
+// create marker for first cordinate only
+
+
+var markerLayer = new Konva.Layer();
+var markerItem = new Konva.Circle({
+    x: 10,
+    y: 110,
+    radius: 10,
+    fill: 'red',
+    stroke: 'black',
+    strokeWidth: 1
+});
+
+markerLayer.add(markerItem);
+
+
+var layer = new Konva.Layer();
+
+let linePath = new Konva.Line({
+    x: 0,
+    y: 60,
+    points: [0, 50, 1500, 50],
+    stroke: "rgba(0, 156, 234, 1)",
+    strokeWidth: 1,
+});
+layer.add(linePath);
+
+
+stage.add(layer);
+stage.add(markerLayer);
+
+//______________________________________________-
+
+let cords = [{
+        lat: 28.482848399999998,
+        lng: 77.06794769999999
+    },
+    {
+        lat: 28.4902880,
+        lng: 77.0606180
+    },
+    {
+        lat: 28.4902034,
+        lng: 77.0606112
+    },
+    {
+        lat: 28.49015,
+        lng: 77.0606
+    },
+    {
+        lat: 28.48872,
+        lng: 77.06177
+    },
+    {
+        lat: 28.49065,
+        lng: 77.06041
+    }
+]
+
+let startingPoint = cords[0];
+let lastVisitedPosition = '';
+
+function fetchLocation(index) {
+ getLocation();
+}
+
+function getPosition(current) {
+   let d;
+   if (lastVisitedPosition) {
+       d = distance(current.lat, current.lng, lastVisitedPosition.lat, lastVisitedPosition.lng); // that is in miles from last visited pointer
+   } else {
+    
+  //  current = cords[0];
+       d = distance(current.lat, current.lng, startingPoint.lat, startingPoint.lng); // that is in  from startin point
+   }
+
+   alert(d  + ' '+  current.lat);
+   moveMarker(d); // we assumed that 1 miles is same as 1 px here
+   lastVisitedPosition = current;
+}
+
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(showPosition);
+    } else {
+        console.log("Geolocation is not supported by this browser.");
+    }
+}
+
+
+
+function showPosition(position) {
+    getPosition({lat: position.coords.latitude, lng: position.coords.longitude});
+
+}
+/* 
+function getAngleAndDistanceFromCurrent(current) {
+    let d = distance(current.lat, current.lng, lastVisitedPosition.lat, lastVisitedPosition.lng); // that is in miles
+
+    let angle = calculateBearing(current.lat, current.lng, lastVisitedPosition.lat, lastVisitedPosition.lng);
+    // we assumed that 1 miles is same as 1 px here
+    //console.log('distance from last visted position', d,angle);
+
+    return {
+        d: d,
+        angle: angle
+    };
+
+}
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//________________________________________________
+
+
+function moveMarker(x, y) {
+    markerItem.setAttrs({
+        x: x
+    });
+    markerLayer.draw();
+}
+
+
+function radians(degrees) {
+    var pi = Math.PI;
+    return degrees * (pi / 180);
+}
+
+function degrees(radians) {
+    var pi = Math.PI;
+    return radians * (180 / pi);
+}
+
+
+function calculateBearing(lat1, lng1, lat2, lng2) {
+
+    //'''calculates the azimuth in degrees from start point to end point'''
+    let startLat = radians(lat1);
+    let startLong = radians(lng1);
+    let endLat = radians(lat2);
+    let endLong = radians(lng2);
+    let dLong = endLong - startLong;
+    let dPhi = Math.log(Math.tan(endLat / 2.0 + Math.PI / 4.0) / Math.tan(startLat / 2.0 + Math.PI / 4.0));
+    if (Math.abs(dLong) > Math.PI) {
+        if (dLong > 0.0)
+            dLong = -(2.0 * Math.PI - dLong)
+    } else {
+        dLong = (2.0 * Math.PI + dLong)
+    }
+    bearing = (degrees(Math.atan2(dLong, dPhi)) + 360.0) % 360.0;
+    return bearing;
+
+}
+
+
+//https://www.geodatasource.com/developers/javascript
+function distance(lat1, lon1, lat2, lon2, unit = 'MI') { // default unit is miles
+    if ((lat1 == lat2) && (lon1 == lon2)) {
+        return 0;
+    } else {
+        var radlat1 = Math.PI * lat1 / 180;
+        var radlat2 = Math.PI * lat2 / 180;
+        var theta = lon1 - lon2;
+        var radtheta = Math.PI * theta / 180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        if (dist > 1) {
+            dist = 1;
+        }
+        dist = Math.acos(dist);
+        dist = dist * 180 / Math.PI;
+        dist = dist * 60 * 1.1515;
+        if (unit == "K") {
+            dist = dist * 1.609344
+        }
+        if (unit == 'MI') {
+            dist = dist * 1609.34
+        }
+        if (unit == "N") {
+            dist = dist * 0.8684
+        }
+        return dist;
+    }
+}
+
+    </script>
+</body>
+
+</html>
